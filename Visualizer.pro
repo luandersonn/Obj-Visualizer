@@ -4,6 +4,8 @@ LIBS += -LD:\Qt\5.5\mingw492_32\lib\libQt5OpenGL.a -lopengl32 -lglew32
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG += C++11
+
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
@@ -11,11 +13,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 SOURCES += \
     canvas.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    object3d.cpp \
+    utils.cpp
 
 HEADERS += \
     canvas.h \
-    mainwindow.h
+    mainwindow.h \
+    object3d.h \
+    utils.h
 
 FORMS += \
     mainwindow.ui
