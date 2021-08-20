@@ -14,7 +14,9 @@ public:
     void paintGL();
     void resizeGL(int width, int height);
     void openFile(std::string path);
-
+    void rotate(float degree, float x, float y, float z);
+    void scale(float value);
+    void translate(float x, float y, float z);
 private:
     std::vector<Object3D> objects;
     uint32_t vboIdCount;

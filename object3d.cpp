@@ -8,9 +8,16 @@
 Object3D::Object3D(uint32_t vboId, string filePath)
 {
     this->vboId = vboId;
+    rotate = Vertex();
+    translate = Vertex();
+    scale = Vertex();
+    scale.x = 1;
+    scale.y = 1;
+    scale.z = 1;
 
     vertices = vector<array<float,3>>();
     faces = vector<array<int,3>>();
+    colors = vector<array<float,3>>();
 
     ifstream MyReadFile(filePath);
     string line;
@@ -43,7 +50,12 @@ Object3D::Object3D(uint32_t vboId, string filePath)
                 face[count] = stoi(m.str()) - 1; // File index start with 1 (!)
                 count++;
             }
-            faces.push_back(array<int, 3> { face[0], face[1], face[2] });
+            float color[3];
+            color[0] = (rand() % 255) / 255.0;
+            color[1] = (rand() % 255) / 255.0;
+            color[2] = (rand() % 255) / 255.0;
+            colors.push_back(array<float, 3> { color[1], color[2], color[3]});
+            faces.push_back(array<int, 3> { face[0], face[1], face[2] });            
         }
     }
     MyReadFile.close();

@@ -6,15 +6,10 @@
 #include <string>
 
 struct Vertex {
-    float x;
-    float y;
-    float z;
-};
-
-struct Face {
-    int index1;
-    int index2;
-    int index3;
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    float degree = 0;
 };
 
 using namespace std;
@@ -27,6 +22,10 @@ public:
     uint32_t vboId;
     vector<array<float, 3>> vertices;
     vector<array<int, 3>> faces;
+    vector<array<float, 3>> colors;
+    Vertex scale;
+    Vertex translate;
+    Vertex rotate;
 private:
 
 };

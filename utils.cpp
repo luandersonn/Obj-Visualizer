@@ -1,8 +1,9 @@
 #include "utils.h"
+#include <time.h>
 
 Utils::Utils()
 {
-
+    srand ( time ( NULL ) ); // Seed random number generator. Only do this once.
 }
 
 
@@ -23,4 +24,13 @@ std::list<std::string> Utils::strSplit(std::string source, std::string delimiter
     }
     array.push_back(source.substr(last));
     return array;
+}
+
+float* Utils::get_random_color()
+{
+    auto color = new float[3];
+    color[0] = (rand() % 255) / 255.0;
+    color[1] = (rand() % 255) / 255.0;
+    color[2] = (rand() % 255) / 255.0;
+    return color;
 }
