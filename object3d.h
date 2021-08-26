@@ -4,6 +4,8 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <qfile.h>
+
 
 struct Vertex {
     float x = 0;
@@ -17,16 +19,20 @@ using namespace std;
 class Object3D
 {
 public:
-    Object3D(uint32_t vboId, std::string fileName);
-    ~Object3D();
-    uint32_t vboId;
-    vector<array<float, 3>> vertices;
-    vector<array<int, 3>> faces;
-    vector<array<float, 3>> colors;
+    Object3D(std::string fileName);    
+    uint32_t VBO;
+    uint32_t EBO;
+    uint32_t VAO;
+    vector<float> vertices;
+    vector<uint32_t> faces;
     Vertex scale;
     Vertex translate;
     Vertex rotate;
+
+    void Parse(string filePath);
 private:
+    void processLine(QByteArray line);
+
 
 };
 

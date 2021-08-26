@@ -12,9 +12,9 @@ bool Utils::strStartWith(std::string original, std::string prefix)
     return original.rfind(prefix, 0) == 0;
 }
 
-std::list<std::string> Utils::strSplit(std::string source, std::string delimiter)
+std::vector<std::string> Utils::strSplit(std::string source, std::string delimiter)
 {
-    std::list<std::string> array = std::list<std::string>();
+    std::vector<std::string> array = std::vector<std::string>();
     size_t last = 0;
     size_t next = 0;
     while ((next = source.find(delimiter, last)) != std::string::npos)

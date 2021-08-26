@@ -1,13 +1,14 @@
 #include "object3d.h"
-#include "utils.h"
-
 #include <iostream>
-#include <fstream>
+#include <string.h>
+#include <qdebug.h>
 #include <regex>
+#include <utils.h>
 
-Object3D::Object3D(uint32_t vboId, string filePath)
-{
-    this->vboId = vboId;
+
+
+Object3D::Object3D(string filePath)
+{    
     rotate = Vertex();
     translate = Vertex();
     scale = Vertex();
@@ -15,56 +16,53 @@ Object3D::Object3D(uint32_t vboId, string filePath)
     scale.y = 1;
     scale.z = 1;
 
-    vertices = vector<array<float,3>>();
-    faces = vector<array<int,3>>();
-    colors = vector<array<float,3>>();
-
-    ifstream MyReadFile(filePath);
-    string line;
-    while (getline (MyReadFile, line))
-    {
-        if(Utils::strStartWith(line, "v ")) // VERTEX
-        {
-            float vertex[3];
-            auto count = 0;
-            for(string pierce : Utils::strSplit(line, " "))
-            {
-                if(count == 0){
-                    count++;
-                    continue; // Pule o primeiro item, que é "v "
-                }
-                vertex[count - 1] = stof(pierce);
-                count++;
-            }
-
-            vertices.push_back(array<float, 3> { vertex[0], vertex[1], vertex[2] });
-        }
-        else if(Utils::strStartWith(line, "f ")) // FACE
-        {
-            int face[3];
-            auto count = 0;
-            regex r(" \\d+"); // Get only numbers that start with space (' ') + backslash ('\')
-            for(sregex_iterator i = sregex_iterator(line.begin(), line.end(), r); i != sregex_iterator(); ++i )
-            {
-                smatch m = *i;
-                face[count] = stoi(m.str()) - 1; // File index start with 1 (!)
-                count++;
-            }
-            float color[3];
-            color[0] = (rand() % 255) / 255.0;
-            color[1] = (rand() % 255) / 255.0;
-            color[2] = (rand() % 255) / 255.0;
-            colors.push_back(array<float, 3> { color[1], color[2], color[3]});
-            faces.push_back(array<int, 3> { face[0], face[1], face[2] });            
-        }
-    }
-    MyReadFile.close();
-
-
+    Parse(filePath);
 }
 
-// Lembre-se de destrutir as referencias
-Object3D::~Object3D()
+void Object3D::Parse(string filePath)
 {
+    vertices = vector<float>();
+    faces = vector<unsigned int>();
+    auto file = QFile(filePath.data());
 
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw std::runtime_error("file read error");
+
+    while (!file.atEnd())
+    {
+        QByteArray line = file.readLine();
+        processLine(line);
+    }
+}
+
+void Object3D::processLine(QByteArray line)
+{
+    if(line.startsWith(QByteArray("v ")))
+    {
+        auto numberArray = Utils::strSplit(line.toStdString(), " ");
+        vertices.push_back(stof(numberArray[1]));
+        vertices.push_back(stof(numberArray[2]));
+        vertices.push_back(stof(numberArray[3]));
+    }
+    else if(line.startsWith(QByteArray("f ")))
+    {
+
+        string s1 = line.toStdString();
+        const regex e(R"( \d+)");
+
+        std::sregex_iterator iter(s1.begin(), s1.end(), e);
+        std::sregex_iterator end;
+        unsigned int count = 0;
+        while(iter != end)
+        {
+            for(unsigned i = 0; i < iter->size(); ++i)
+            {
+                if(count++ == 3)
+                    break;
+                faces.push_back(stoul(((*iter)[i]).str()) - 1);
+
+            }
+            ++iter;
+        }
+    }
 }
