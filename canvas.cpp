@@ -23,20 +23,14 @@ void Canvas::initializeGL()
     // Set the Viewport
     glViewport(0, 0, width(), height());
 
-    openFile("C:\\Users\\luand\\3D Objects\\minecraft-steve.obj");
-    //openFile("C:\\Users\\luand\\3D Objects\\Triangulo.obj");
-    //openFile("C:\\Users\\luand\\3D Objects\\low-poly-fox-by-pixelmannen.obj");
-    //Parse("C:\\Users\\luand\\3D Objects\\Triangulo.obj");
+    openFile("C:\\Users\\luand\\3D Objects\\Triangulo.obj");
 }
 
 
 void Canvas::paintGL()
 {
     glClearColor(0.5, 0.5, 0.5, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    // render the triangle
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+    glClear(GL_COLOR_BUFFER_BIT);   
     if(objects.size() == 0)
         return;
     glUseProgram(shaderProgram);
@@ -65,50 +59,6 @@ void Canvas::openFile(std::string path)
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    /*
-    float vertices [] {
-        -0.5, 0.0, -0.5,
-         0.5, 0.0, -0.5,
-         0.5, 0.0,  0.5,
-        -0.5, 0.0,  0.5,
-         0.0, 0.5,  0.0};
-    unsigned int indices []
-    {
-        0, 4, 1,
-        1, 4, 2,
-        0, 1, 4, // 4-1
-        2, 4, 3,
-        3, 4, 0
-    };
-    for(unsigned long long i = 0; i < object.vertices.size(); i += 3)
-    {
-        qDebug() << object.vertices[i]  << ",  " << object.vertices[i + 1] << ",  " << object.vertices[i + 2];
-    }
-    for(unsigned long long i = 0; i < object.faces.size(); i += 3)
-    {
-        //qDebug() << object.faces[i]  << ",  " << object.faces[i + 1] << ",  " << object.faces[i + 2];
-    }
-    /*float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left
-    };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    };
-
-
-    float * test = object.vertices.data();
-    for(unsigned int i = 0; i < object.vertices.size(); i += 3)
-    {
-        qDebug() << test[i]  << ",  " << test[i + 1] << ",  " << test[i + 2];
-    }
-    qDebug() << sizeof(vertices) << sizeof(float) * object.vertices.size();*/
-
-
-    //unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -169,7 +119,7 @@ unsigned int Canvas::openShader(int type, string filePath)
 {
     QFile file(filePath.c_str());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return NULL;
+        throw std::runtime_error("file read error");
 
     QByteArray text = file.readAll();
     string str = text.toStdString();
@@ -189,7 +139,7 @@ unsigned int Canvas::openShader(int type, string filePath)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         auto errorMessage = "ERROR::SHADER::COMPILATION_FAILED\n" + std::string(infoLog) + "\n";
-        qDebug(errorMessage.c_str());
+        qDebug() << errorMessage.data();
         exit(1);
     }
     delete [] source;
@@ -197,61 +147,6 @@ unsigned int Canvas::openShader(int type, string filePath)
 }
 
 void Canvas::resizeGL(int width, int height)
-{
+{    
     glViewport(0, 0, width, height);
-}
-
-
-
-void Canvas::Parse(string filePath)
-{
-    vertices = vector<float>();
-    faces = vector<unsigned int>();
-    auto file = QFile(filePath.data());
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        throw std::runtime_error("file read error");
-
-    while (!file.atEnd())
-    {
-        QByteArray line = file.readLine();
-        processLine(line);
-    }
-}
-
-void Canvas::processLine(QByteArray line)
-{
-    if(line.startsWith(QByteArray("v ")))
-    {
-        auto numberArray = Utils::strSplit(line.toStdString(), " ");
-        vertices.push_back(stof(numberArray[1]));
-        vertices.push_back(stof(numberArray[2]));
-        vertices.push_back(stof(numberArray[3]));
-    }
-    else if(line.startsWith(QByteArray("f ")))
-    {
-
-        string s1 = line.toStdString();
-        const regex e(R"( \d+)");
-
-        std::sregex_iterator iter(s1.begin(), s1.end(), e);
-        std::sregex_iterator end;
-
-        int count = 0;
-        while(iter != end)
-        {
-            for(unsigned i = 0; i < iter->size(); ++i)
-            {
-                if(count++ == 3)
-                    break;
-                auto value = (*iter)[i];
-                auto valueStr = value.str();
-                auto valueUInt = stoul(valueStr);
-                valueUInt--;
-                faces.push_back(valueUInt);
-
-            }
-            ++iter;
-        }
-    }
 }

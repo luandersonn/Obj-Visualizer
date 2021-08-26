@@ -23,9 +23,7 @@ public:
     void processLine(QByteArray line);
 
 private:
-    vector<Object3D> objects;
-    vector<float> vertices;
-    vector<uint32_t> faces;
+    vector<Object3D> objects;    
     uint32_t shaderProgram;    
     uint32_t VAO;
     uint32_t VBO;
